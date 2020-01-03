@@ -3,7 +3,6 @@ package life.drunkshrimper.community.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -12,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @time: 2020/1/2 22:48
  */
 @Controller
-public class HelloController {
+public class IndexController {
 
-    @GetMapping("/hello")
+    @GetMapping("/index")
     public String hello(@RequestParam(name = "name",required = true) String name, Model model){
 
         model.addAttribute("name",name);
-        return "hello";
+        return "index";
     }
 }
