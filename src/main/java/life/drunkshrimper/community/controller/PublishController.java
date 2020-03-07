@@ -41,26 +41,28 @@ public class PublishController {
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
 
-        if(null == title || "".equals(title)){
+        if (null == title || "".equals(title)) {
             model.addAttribute("error", "title can not be null");
             return "publish";
         }
-        if(null == description || "".equals(description)){
+        if (null == description || "".equals(description)) {
             model.addAttribute("error", "description can not be null");
             return "publish";
         }
-        if(null == tag || "".equals(tag)){
+        if (null == tag || "".equals(tag)) {
             model.addAttribute("error", "tag can not be null");
             return "publish";
         }
 
         User user = null;
         Cookie[] cookies = req.getCookies();
-        for (Cookie cookie : cookies) {
-            if ("token".equals(cookie.getName())) {
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                break;
+        if (null != cookies && 0 != cookies.length) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    user = userMapper.findByToken(token);
+                    break;
+                }
             }
         }
 
