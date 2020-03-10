@@ -4,6 +4,7 @@ import life.drunkshrimper.community.dto.PaginationDTO;
 import life.drunkshrimper.community.dto.QuestionDTO;
 import life.drunkshrimper.community.exception.CustomizeErrorCode;
 import life.drunkshrimper.community.exception.CustomizeException;
+import life.drunkshrimper.community.mapper.QuestionExtMapper;
 import life.drunkshrimper.community.mapper.QuestionMapper;
 import life.drunkshrimper.community.mapper.UserMapper;
 import life.drunkshrimper.community.model.Question;
@@ -25,6 +26,8 @@ public class QuestionService {
 
     @Autowired(required = false)
     private QuestionMapper questionMapper;
+    @Autowired(required = false)
+    private QuestionExtMapper questionExtMapper;
     @Autowired(required = false)
     private UserMapper userMapper;
 
@@ -138,5 +141,12 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }
