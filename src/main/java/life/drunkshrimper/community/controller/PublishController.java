@@ -1,10 +1,12 @@
 package life.drunkshrimper.community.controller;
 
 
+import life.drunkshrimper.community.cache.TagCache;
 import life.drunkshrimper.community.dto.QuestionDTO;
 import life.drunkshrimper.community.model.Question;
 import life.drunkshrimper.community.model.User;
 import life.drunkshrimper.community.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,54 +25,56 @@ public class PublishController {
     private QuestionService questionService;
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
     @PostMapping("/publish")
     public String doPublish(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("tag") String tag,
-            HttpServletRequest request,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "id", required = false) Long id,
+            HttpServletRequest request,
             Model model) {
-
         model.addAttribute("title", title);
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
+        model.addAttribute("tags", TagCache.get());
+
+        if (StringUtils.isBlank(title)) {
+            model.addAttribute("error", "标题不能为空");
+            return "publish";
+        }
+        if (StringUtils.isBlank(description)) {
+            model.addAttribute("error", "问题补充不能为空");
+            return "publish";
+        }
+        if (StringUtils.isBlank(tag)) {
+            model.addAttribute("error", "标签不能为空");
+            return "publish";
+        }
+
+        String invalid = TagCache.filterInvalid(tag);
+        if (StringUtils.isNotBlank(invalid)) {
+            model.addAttribute("error", "输入非法标签:" + invalid);
+            return "publish";
+        }
 
         User user = (User) request.getSession().getAttribute("user");
-
-        if (null == user) {
+        if (user == null) {
             model.addAttribute("error", "用户未登录");
             return "publish";
         }
 
-        if (null == title || "".equals(title)) {
-            model.addAttribute("error", "title can not be null");
-            return "publish";
-        }
-        if (null == description || "".equals(description)) {
-            model.addAttribute("error", "description can not be null");
-            return "publish";
-        }
-        if (null == tag || "".equals(tag)) {
-            model.addAttribute("error", "tag can not be null");
-            return "publish";
-        }
-
-
-
         Question question = new Question();
-        question.setId(id);
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);
         question.setCreator(user.getId());
-
+        question.setId(id);
         questionService.createOrUpdate(question);
-
         return "redirect:/";
     }
 
@@ -82,7 +86,7 @@ public class PublishController {
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());
         model.addAttribute("id", question.getId());
-        model.addAttribute("tags", question.getTag());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 }

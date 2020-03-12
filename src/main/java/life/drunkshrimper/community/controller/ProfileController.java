@@ -2,6 +2,7 @@ package life.drunkshrimper.community.controller;
 
 import life.drunkshrimper.community.dto.PaginationDTO;
 import life.drunkshrimper.community.model.User;
+import life.drunkshrimper.community.service.NotificationService;
 import life.drunkshrimper.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,8 +23,8 @@ public class ProfileController {
 
     @Autowired
     private QuestionService questionService;
-    //@Autowired
-    //private NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(HttpServletRequest request,
@@ -43,7 +44,7 @@ public class ProfileController {
             PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
             model.addAttribute("pagination", paginationDTO);
         } else if ("replies".equals(action)) {
-            PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
+            PaginationDTO paginationDTO = notificationService.list(user.getId(), page, size);
             model.addAttribute("section", "replies");
             model.addAttribute("pagination", paginationDTO);
             model.addAttribute("sectionName", "最新回复");
