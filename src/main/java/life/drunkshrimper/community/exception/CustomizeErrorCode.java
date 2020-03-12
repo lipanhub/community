@@ -3,7 +3,7 @@ package life.drunkshrimper.community.exception;
 /**
  * Created by codedrinker on 2019/5/28.
  */
-public enum CustomizeErrorCode implements ICustomizeErrorCode {
+public enum CustomizeErrorCode implements IErrorCode {
 
     QUESTION_NOT_FOUND(2001, "你找到问题不在了，要不要换个试试？"),
     TARGET_PARAM_NOT_FOUND(2002, "未选中任何问题或评论进行回复"),
