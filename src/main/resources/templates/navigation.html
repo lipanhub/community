@@ -34,8 +34,8 @@
                             <li><a href="/logout">退出登录</a></li>
                         </ul>
                     </li>
-                    <li th:if="${session.user == null}"><a
-                            href="https://github.com/login/oauth/authorize?client_id=929acc49c332594948d6&redirect_uri=http://localhost:8888/callback&scope=user&state=1">登录</a>
+                    <li th:if="${session.user == null}">
+                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='929acc49c332594948d6',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">登录</a>
                     </li>
                 </ul>
             </div>
